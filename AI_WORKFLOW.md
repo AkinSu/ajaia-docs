@@ -98,8 +98,15 @@ version actually increment.
 
 **3. Browser verification of every surface.** Sign-in, the owned/shared split, the
 editor, toolbar active states, the autosave indicator moving to `Saved 4:52 PM`, and the
-share dialog. Automated tests would not have caught a hydration mismatch or an
-unreadable toolbar.
+share dialog.
+
+This caught a bug nothing else would have. After reseeding the database I hit an
+**infinite redirect loop**: the session cookie still named a user id that no longer
+existed, so `/docs` saw a cookie and bounced to `/login`, which also saw a cookie and
+bounced back. Every test passed, typecheck passed, the build passed — the page simply
+never loaded. The fix was to check that the *account still exists* rather than that a
+cookie is merely present. A reviewer would have hit this on any redeploy that reseeded
+data, which is exactly when a first impression is formed.
 
 **4. Production build on every change.** The client-bundle leak above was caught by
 `next build`, not by tests or typecheck — which is precisely why it ran continuously

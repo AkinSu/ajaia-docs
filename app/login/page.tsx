@@ -1,21 +1,28 @@
 import { redirect } from "next/navigation";
 import { SignInForm } from "@/components/sign-in-form";
+import { getCurrentUser } from "@/lib/current-user";
 import { listUsers } from "@/lib/documents";
-import { getCurrentUserId } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
-  if (await getCurrentUserId()) redirect("/docs");
+  let users: Awaited<ReturnType<typeof listUsers>> = [];
+  let signedIn = false;
+  let loadError: string | null = null;
 
   // A missing or unreachable database should explain itself rather than crash.
-  let users: Awaited<ReturnType<typeof listUsers>> = [];
-  let loadError: string | null = null;
   try {
+    // Checking that the account still exists, not just that a cookie is
+    // present: a cookie left over from a reseed or redeploy would otherwise
+    // bounce between /login and /docs forever.
+    signedIn = (await getCurrentUser()) !== null;
     users = await listUsers();
   } catch {
     loadError = "Could not reach the database. Check DATABASE_URL and run npm run setup.";
   }
+
+  // redirect() throws, so it must happen outside the try block.
+  if (signedIn) redirect("/docs");
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-8 px-6 py-12">

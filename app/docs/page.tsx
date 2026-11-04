@@ -3,20 +3,17 @@ import { redirect } from "next/navigation";
 import { DocumentActions } from "@/components/document-actions";
 import { OwnedDocumentRow } from "@/components/owned-document-row";
 import { UserMenu } from "@/components/user-menu";
-import { getUserById, listDocumentsForUser } from "@/lib/documents";
+import { getCurrentUser } from "@/lib/current-user";
+import { listDocumentsForUser } from "@/lib/documents";
 import { formatRelativeTime } from "@/lib/format";
-import { getCurrentUserId } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function DocumentsPage() {
-  const userId = await getCurrentUserId();
-  if (!userId) redirect("/login");
-
-  const user = await getUserById(userId);
+  const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const { owned, shared } = await listDocumentsForUser(userId);
+  const { owned, shared } = await listDocumentsForUser(user.id);
 
   return (
     <div className="min-h-screen">
