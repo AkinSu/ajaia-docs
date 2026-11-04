@@ -7,8 +7,8 @@
  */
 import { generateJSON } from "@tiptap/html/server";
 import { config } from "dotenv";
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import { editorExtensions } from "../lib/editor-extensions";
 import { documentShares, documents, users } from "../lib/db/schema";
 
@@ -21,7 +21,11 @@ if (!url) {
   process.exit(1);
 }
 
-const db = drizzle(neon(url), { schema: { users, documents, documentShares } });
+const pool = new Pool({
+  connectionString: url,
+  ssl: url.includes("localhost") || url.includes("127.0.0.1") ? false : { rejectUnauthorized: false },
+});
+const db = drizzle(pool, { schema: { users, documents, documentShares } });
 
 const doc = (html: string) => generateJSON(html, editorExtensions);
 
@@ -100,6 +104,7 @@ async function main() {
   console.log("  alice@ajaia.test  owns 'Q4 Product Plan' (shared with Bob as editor)");
   console.log("  bob@ajaia.test    owns 'Engineering notes' (shared with Alice as viewer)");
   console.log("  carol@ajaia.test  has nothing yet - use her to test a fresh share");
+  await pool.end();
 }
 
 main().catch((error) => {
