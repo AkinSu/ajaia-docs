@@ -157,3 +157,15 @@ that was worth building well.
 
 Next.js 16 (App Router) · TypeScript · Tiptap 3 · Tailwind CSS 4 · Drizzle ORM ·
 PostgreSQL · Vitest · deployed on Vercel with Neon.
+
+---
+
+## Screenshots
+
+**Document list — owned vs. shared, with owner and access level**
+
+![Documents list](./docs/screenshots/01-documents-list.jpg)
+
+**Editor — headings, bold, italic, underline and both list types, with autosave state**
+
+![Editor](./docs/screenshots/02-editor.jpg)
