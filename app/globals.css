@@ -1,26 +1,89 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Tiptap renders into a plain contenteditable, so the document's own typography
+   is styled here rather than with utility classes. */
+.document-body {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: #0f172a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.document-body:focus {
+  outline: none;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.document-body > * + * {
+  margin-top: 0.75rem;
+}
+
+.document-body h1 {
+  font-size: 1.875rem;
+  font-weight: 650;
+  line-height: 1.25;
+  margin-top: 1.75rem;
+  letter-spacing: -0.015em;
+}
+
+.document-body h2 {
+  font-size: 1.4rem;
+  font-weight: 650;
+  line-height: 1.3;
+  margin-top: 1.5rem;
+}
+
+.document-body h3 {
+  font-size: 1.15rem;
+  font-weight: 650;
+  margin-top: 1.25rem;
+}
+
+.document-body ul,
+.document-body ol {
+  padding-left: 1.5rem;
+}
+
+.document-body ul {
+  list-style: disc;
+}
+
+.document-body ol {
+  list-style: decimal;
+}
+
+.document-body li + li {
+  margin-top: 0.25rem;
+}
+
+.document-body li > p {
+  margin: 0;
+}
+
+.document-body u {
+  text-decoration: underline;
+}
+
+.document-body blockquote {
+  border-left: 3px solid #cbd5e1;
+  padding-left: 1rem;
+  color: #475569;
+}
+
+.document-body code {
+  background: #f1f5f9;
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.3rem;
+  font-size: 0.9em;
+}
+
+/* Placeholder for an empty document. */
+.document-body p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

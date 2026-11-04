@@ -1,0 +1,16 @@
+Kickoff notes, taken on a phone in a hallway.
+
+We agreed the import flow should feel boring. You pick a file, you wait less
+than a second, and you land in the editor with your cursor already in the
+document. No preview step, no confirmation dialog, no "choose how to map your
+styles" wizard.
+
+Plain text files get the simplest possible treatment. Blank lines separate
+paragraphs. A single newline inside a paragraph stays a line break, because
+people wrap addresses and poetry by hand and expect that to hold.
+
+Anything that looks like markup in a .txt file is text, not markup. If someone
+pastes <b>this</b> into their notes, they should see the angle brackets.
+
+Next step: Priya writes the converter, Marcus wires up the button, and we both
+stop arguing about file size limits until we have real numbers.
