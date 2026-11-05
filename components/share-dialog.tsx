@@ -185,7 +185,7 @@ export function ShareDialog({
             <button
               type="submit"
               disabled={busy || email.trim().length === 0}
-              className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-60"
+              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-60"
             >
               {busy ? "Working…" : "Share"}
             </button>

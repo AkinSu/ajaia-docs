@@ -1,7 +1,6 @@
 "use client";
 
 import { type Editor, useEditorState } from "@tiptap/react";
-import { IMAGE_WIDTHS } from "@/lib/image-constants";
 
 type ToolbarProps = {
   editor: Editor;
@@ -38,7 +37,7 @@ function Button({
       onClick={onClick}
       className={`flex h-8 min-w-8 items-center justify-center rounded-md px-2 text-sm transition disabled:cursor-not-allowed disabled:opacity-40 ${
         active
-          ? "bg-slate-900 text-white"
+          ? "bg-blue-600 text-white"
           : "text-slate-700 hover:bg-slate-200/70"
       }`}
     >
@@ -62,8 +61,6 @@ export function Toolbar({ editor, disabled = false, onInsertImage, imageBusy }: 
       paragraph: instance.isActive("paragraph"),
       bulletList: instance.isActive("bulletList"),
       orderedList: instance.isActive("orderedList"),
-      image: instance.isActive("image"),
-      imageWidth: (instance.getAttributes("image").width as string | undefined) ?? null,
     }),
   });
 
@@ -170,27 +167,6 @@ export function Toolbar({ editor, disabled = false, onInsertImage, imageBusy }: 
         </>
       ) : null}
 
-      {/* Width controls appear only while an image is selected, so the
-          toolbar stays short the rest of the time. */}
-      {state.image ? (
-        <>
-          <Divider />
-          <span className="px-1 text-xs font-medium text-slate-500">Size</span>
-          {IMAGE_WIDTHS.map((option) => (
-            <Button
-              key={option.value}
-              label={`Image size: ${option.label}`}
-              active={state.imageWidth === option.value}
-              disabled={disabled}
-              onClick={() =>
-                editor.chain().focus().updateAttributes("image", { width: option.value }).run()
-              }
-            >
-              {option.label}
-            </Button>
-          ))}
-        </>
-      ) : null}
     </div>
   );
 }

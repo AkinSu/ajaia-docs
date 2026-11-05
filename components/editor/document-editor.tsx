@@ -3,6 +3,7 @@
 import type { JSONContent } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extensions";
 import { EditorContent, useEditor } from "@tiptap/react";
+import { BubbleMenu } from "@tiptap/react/menus";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ShareDialog } from "@/components/share-dialog";
@@ -11,6 +12,7 @@ import { canEdit, canManageSharing, type AccessRole } from "@/lib/access";
 import { editorExtensions } from "@/lib/editor-extensions";
 import { formatTime } from "@/lib/format";
 import {
+  IMAGE_WIDTHS,
   MAX_IMAGE_BYTES,
   SUPPORTED_IMAGE_LABEL,
   SUPPORTED_IMAGE_TYPES,
@@ -392,7 +394,55 @@ export function DocumentEditor({
 
         <div className="document-sheet document-pages rounded-xl border border-slate-200 bg-white px-16 py-20 shadow-sm">
           {editor ? (
-            <EditorContent editor={editor} />
+            <>
+              {/* The size control belongs to the picture, not the toolbar: it
+                  appears under whichever image is selected. */}
+              {editable ? (
+                <BubbleMenu
+                  editor={editor}
+                  shouldShow={({ editor: instance }) => instance.isActive("image")}
+                  options={{ placement: "bottom", offset: 8 }}
+                >
+                  <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                    <span className="px-1.5 text-xs font-medium text-slate-500">Size</span>
+                    {IMAGE_WIDTHS.map((option) => {
+                      const active =
+                        (editor.getAttributes("image").width as string | undefined) === option.value;
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          aria-pressed={active}
+                          onClick={() =>
+                            editor
+                              .chain()
+                              .focus()
+                              .updateAttributes("image", { width: option.value })
+                              .run()
+                          }
+                          className={`rounded-lg px-2.5 py-1 text-xs font-medium transition ${
+                            active
+                              ? "bg-blue-600 text-white"
+                              : "text-slate-600 hover:bg-slate-100"
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                    <span className="mx-0.5 h-5 w-px bg-slate-200" />
+                    <button
+                      type="button"
+                      onClick={() => editor.chain().focus().deleteSelection().run()}
+                      className="rounded-lg px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-red-50 hover:text-red-600"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </BubbleMenu>
+              ) : null}
+              <EditorContent editor={editor} />
+            </>
           ) : (
             <p className="text-sm text-slate-400">Loading editor…</p>
           )}

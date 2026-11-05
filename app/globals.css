@@ -166,9 +166,9 @@
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
-    transparent calc(var(--page-height) - 1px),
-    #e2e8f0 calc(var(--page-height) - 1px),
-    #e2e8f0 var(--page-height)
+    transparent calc(var(--page-height) - 2px),
+    #cbd5e1 calc(var(--page-height) - 2px),
+    #cbd5e1 var(--page-height)
   );
   background-position: 0 5rem; /* start after the sheet's top padding */
   background-repeat: repeat-y;

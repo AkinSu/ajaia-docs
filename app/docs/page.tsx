@@ -1,13 +1,21 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { DocumentActions } from "@/components/document-actions";
-import { OwnedDocumentRow } from "@/components/owned-document-row";
+import { DocumentCard } from "@/components/document-card";
 import { UserMenu } from "@/components/user-menu";
 import { getCurrentUser } from "@/lib/current-user";
 import { listDocumentsForUser } from "@/lib/documents";
-import { formatRelativeTime } from "@/lib/format";
+import { previewBlocks } from "@/lib/preview";
 
 export const dynamic = "force-dynamic";
+
+function EmptyState({ message }: { message: string }) {
+  return (
+    <p className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-10 text-center text-sm text-slate-500">
+      {message}
+    </p>
+  );
+}
 
 export default async function DocumentsPage() {
   const user = await getCurrentUser();
@@ -17,20 +25,27 @@ export default async function DocumentsPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
-          <Link href="/docs" className="text-lg font-semibold tracking-tight text-slate-900">
-            Ajaia Docs
+      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
+          <Link href="/docs" className="flex items-center gap-2">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
+              A
+            </span>
+            <span className="text-base font-semibold tracking-tight text-slate-900">
+              Ajaia Docs
+            </span>
           </Link>
           <UserMenu name={user.name} email={user.email} />
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-6 py-10">
+      <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Documents</h1>
-            <p className="mt-1 text-sm text-slate-600">
+            <h1 className="text-[28px] font-semibold tracking-tight text-slate-900">
+              Your documents
+            </h1>
+            <p className="mt-1 text-[15px] text-slate-600">
               Create a document, or import an existing file to start from.
             </p>
           </div>
@@ -38,68 +53,59 @@ export default async function DocumentsPage() {
         </div>
 
         <section className="mt-10">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            My documents
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Owned by me
           </h2>
           {owned.length === 0 ? (
-            <p className="mt-3 rounded-xl border border-dashed border-slate-300 bg-white px-4 py-8 text-center text-sm text-slate-500">
-              You have no documents yet. Create one or import a file to get started.
-            </p>
+            <div className="mt-3">
+              <EmptyState message="You have no documents yet. Create one or import a file to get started." />
+            </div>
           ) : (
-            <ul className="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {owned.map((document) => (
-                <OwnedDocumentRow
+                <DocumentCard
                   key={document.id}
-                  document={{
-                    id: document.id,
-                    title: document.title,
-                    updatedAt: document.updatedAt.toISOString(),
-                    shareCount: document.shareCount,
-                  }}
+                  id={document.id}
+                  title={document.title}
+                  updatedAt={document.updatedAt.toISOString()}
+                  blocks={previewBlocks(document.content)}
+                  deletable
+                  badge={
+                    document.shareCount > 0
+                      ? { text: `Shared · ${document.shareCount}`, tone: "neutral" }
+                      : null
+                  }
                 />
               ))}
-            </ul>
+            </div>
           )}
         </section>
 
-        <section className="mt-10">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+        <section className="mt-12">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
             Shared with me
           </h2>
           {shared.length === 0 ? (
-            <p className="mt-3 rounded-xl border border-dashed border-slate-300 bg-white px-4 py-8 text-center text-sm text-slate-500">
-              Nothing has been shared with you yet.
-            </p>
+            <div className="mt-3">
+              <EmptyState message="Nothing has been shared with you yet." />
+            </div>
           ) : (
-            <ul className="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {shared.map((document) => (
-                <li
+                <DocumentCard
                   key={document.id}
-                  className="group border-b border-slate-100 last:border-b-0"
-                >
-                  <Link href={`/docs/${document.id}`} className="flex items-center gap-3 px-4 py-3">
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate font-medium text-slate-900 group-hover:text-blue-700">
-                        {document.title}
-                      </span>
-                      <span className="mt-0.5 block truncate text-xs text-slate-500">
-                        Owned by {document.ownerName} · edited{" "}
-                        {formatRelativeTime(document.updatedAt)}
-                      </span>
-                    </span>
-                    <span
-                      className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        document.role === "editor"
-                          ? "bg-emerald-50 text-emerald-700"
-                          : "bg-slate-100 text-slate-600"
-                      }`}
-                    >
-                      {document.role === "editor" ? "Can edit" : "View only"}
-                    </span>
-                  </Link>
-                </li>
+                  id={document.id}
+                  title={document.title}
+                  updatedAt={document.updatedAt.toISOString()}
+                  blocks={previewBlocks(document.content)}
+                  subtitle={document.ownerName}
+                  badge={{
+                    text: document.role === "editor" ? "Can edit" : "View only",
+                    tone: document.role === "editor" ? "green" : "neutral",
+                  }}
+                />
               ))}
-            </ul>
+            </div>
           )}
         </section>
       </main>

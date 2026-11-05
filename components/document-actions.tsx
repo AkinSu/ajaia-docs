@@ -49,7 +49,7 @@ export function DocumentActions() {
           type="button"
           onClick={createDocument}
           disabled={busy !== null}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-60"
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-60"
         >
           {busy === "create" ? "Creating…" : "New document"}
         </button>

@@ -52,6 +52,7 @@ export async function listDocumentsForUser(userId: string) {
     .select({
       id: documents.id,
       title: documents.title,
+      content: documents.content,
       updatedAt: documents.updatedAt,
       shareCount: sql<number>`(
         select count(*)::int from ${documentShares}
@@ -66,6 +67,7 @@ export async function listDocumentsForUser(userId: string) {
     .select({
       id: documents.id,
       title: documents.title,
+      content: documents.content,
       updatedAt: documents.updatedAt,
       role: documentShares.role,
       ownerName: users.name,

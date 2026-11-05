@@ -16,7 +16,7 @@ export default function HomePage() {
       <div>
         <Link
           href="/docs"
-          className="inline-flex rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700"
+          className="inline-flex rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
         >
           Open documents
         </Link>
