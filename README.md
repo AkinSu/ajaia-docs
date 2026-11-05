@@ -54,7 +54,7 @@ dependency and nothing to run server-side. A print stylesheet hides the app chro
 
 **Pagination** — content is laid out on real pages. A block that would cross a page
 boundary is pushed onto the next page, with a gutter between sheets and matching top and
-bottom margins, and the caret follows it. One limitation: a single block is never split,
+bottom margins, and the caret follows it. A page indicator fades in while you scroll. One limitation: a single block is never split,
 so a paragraph taller than a page overhangs rather than breaking mid-sentence.
 
 **Demo limits** — 50 documents per account and 50 images per document. This runs on free

@@ -34,6 +34,64 @@ type DocumentEditorProps = {
   viewerEmail: string;
 };
 
+
+/**
+ * "3 of 7" pill that appears while scrolling and fades out once you stop,
+ * the way Docs does it. Page boundaries are read from the spacers the
+ * pagination plugin injects, so this needs no state of its own.
+ */
+function PageIndicator() {
+  const [pages, setPages] = useState<{ current: number; total: number } | null>(null);
+  const [visible, setVisible] = useState(false);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const update = () => {
+      const body = document.querySelector<HTMLElement>(".document-body");
+      if (!body) return;
+
+      const spacers = Array.from(body.querySelectorAll<HTMLElement>("[data-page-spacer]"));
+      const total = spacers.length + 1;
+
+      // Count the page boundaries above a probe line a third of the way down
+      // the viewport, which is roughly where the eye sits while reading.
+      const bodyTop = body.getBoundingClientRect().top + window.scrollY;
+      const probe = window.scrollY + window.innerHeight / 3;
+      let current = 1;
+      for (const spacer of spacers) {
+        if (probe >= bodyTop + spacer.offsetTop + spacer.offsetHeight) current += 1;
+      }
+
+      setPages({ current: Math.min(current, total), total });
+      setVisible(true);
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+      hideTimer.current = setTimeout(() => setVisible(false), 1200);
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+    };
+  }, []);
+
+  // A single-page document has nothing to report.
+  if (!pages || pages.total < 2) return null;
+
+  return (
+    <div
+      aria-hidden="true"
+      className={`no-print pointer-events-none fixed right-6 top-1/2 z-20 -translate-y-1/2 rounded-md bg-slate-800 px-2.5 py-1 text-xs font-medium text-white shadow-lg transition-opacity duration-300 ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      {pages.current} of {pages.total}
+    </div>
+  );
+}
+
 export function DocumentEditor({
   documentId,
   initialTitle,
@@ -450,6 +508,8 @@ export function DocumentEditor({
           )}
         </div>
       </main>
+
+      <PageIndicator />
 
       {shareOpen ? (
         <ShareDialog

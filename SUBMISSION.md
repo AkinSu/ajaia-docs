@@ -56,7 +56,8 @@ rather than buried in the toolbar. Images are stored per document and served thr
 check as the document, so they are exactly as private as the document holding them.
 
 **Pagination** — content flows onto real pages with a gutter between sheets and matching
-top and bottom margins; blocks that would cross a boundary move to the next page.
+top and bottom margins; blocks that would cross a boundary move to the next page, and a
+page indicator fades in while scrolling.
 
 **Download as PDF** — a print stylesheet plus the browser's own "Save as PDF". No
 dependency, nothing server-side. The PDF is genuinely paginated.
