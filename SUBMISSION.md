@@ -47,6 +47,13 @@ Akintunji Sule · `akintunji.sule@gmail.com` · November 2026
 **Documents** — create, rename inline, edit, reopen. Bold, italic, underline, H1–H3,
 bulleted and numbered lists, with toolbar active states.
 
+**Images** — insert PNG/JPEG/GIF/WebP up to 2 MB and set the width (Small / Medium /
+Large / Full). Images are stored per document and served through the same authorization
+check as the document, so they are exactly as private as the document holding them.
+
+**Download as PDF** — a print stylesheet plus the browser's own "Save as PDF". No
+dependency, nothing server-side.
+
 **Autosave** — debounced 800 ms, flushed on tab hide and page unload, with a live
 `Saving… / Saved 4:52 PM / Not saved` indicator.
 
@@ -80,7 +87,9 @@ ProseMirror schema, so a crafted request can't persist markup the editor wouldn'
 | Real-time co-editing | **Not built.** Conflicts are detected and surfaced, not merged. | A correct CRDT sync backend is days of work on serverless. The architecture note explains the full reasoning. |
 | Authentication | **Mocked, by design.** Anyone can sign in as anyone. | Explicitly permitted by the brief. Authorization *between* accounts is enforced properly — that's the part worth building. |
 | HTTP-layer tests | **Partial.** Policy and converters are unit tested in CI; routes were verified with a scripted `curl` pass over every status code, not automated. | Would be the first thing I'd add to CI. |
-| Comments, version history, export | **Not built.** | Optional stretch items. Depth over breadth. |
+| Comments, version history | **Not built.** | Optional stretch items. Depth over breadth. |
+| Image drag-resize | **Preset widths only** (25/50/75/100%). | Drag handles are a lot of pointer-event code for the same result. |
+| Orphaned image cleanup | **Not built.** Deleting an image from a document leaves its row. | A sweep for unreferenced assets is the follow-up. |
 | `.docx` fidelity | **Partial.** Headings, bold/italic and lists import. Tables, images, footnotes and tracked changes are dropped. | mammoth maps to semantic HTML rather than rendering faithfully — the right tradeoff for an editable document. |
 | Mobile | **Usable, not tuned** below tablet width. | |
 

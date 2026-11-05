@@ -44,6 +44,14 @@ Built for the Ajaia Full Stack Product Engineer take-home. See
 **Documents** — create, rename, edit, autosave and reopen. Formatting supports **bold**,
 *italic*, <u>underline</u>, headings (H1–H3), and bulleted and numbered lists.
 
+**Images** — insert a picture and set its width to Small, Medium, Large or Full from the
+toolbar. **Supported: PNG, JPEG, GIF, WebP up to 2 MB.** Width is stored as a percentage
+so pictures scale with the page. An image is exactly as private as the document that
+owns it: anyone without access to the document gets a 404 for the image too.
+
+**Download as PDF** — uses the browser's own print dialog ("Save as PDF"), so there is no
+dependency and nothing to run server-side. A print stylesheet hides the app chrome.
+
 **Autosave** — saves 800 ms after you stop typing, and flushes immediately if you hide
 the tab or close the page. The header always shows the current save state.
 
@@ -146,7 +154,8 @@ Built deliberately narrow. What is **not** here, and why:
 | Real-time co-editing (CRDT / multiple cursors) | The honest version is days of work, not hours. Version-guarded saves with a visible conflict banner is the defensible answer at this scope — see [ARCHITECTURE.md](./ARCHITECTURE.md#concurrent-edits). |
 | Real authentication | The brief explicitly permits mocked auth. Seeded accounts make the sharing flow faster for a reviewer to test, and the time went into access control instead. |
 | Comments, suggestions, version history | Each is a feature in its own right. Depth in a few areas beat shallow coverage everywhere. |
-| Images, tables, export | Out of the required formatting set. |
+| Drag-handle image resizing | Four preset widths cover the need; drag handles are a disproportionate amount of pointer-event code for the same outcome. |
+| Tables | Out of the required formatting set. |
 | Mobile layout polish | Usable but not tuned below tablet width. |
 
 **Authentication here is a demo, not a security model**: anyone can sign in as anyone.

@@ -123,6 +123,38 @@ Routing everything through the schema is also what sanitizes it: `<script>` tags
 `onclick` handlers and unknown elements aren't in the schema, so they're discarded
 rather than filtered. That's a stronger guarantee than a blocklist, and it's tested.
 
+### 6. Images are as private as the document that holds them
+
+Image bytes live in a `document_assets` row keyed to a document, not in a blob service.
+For a handful of small pictures another provider is not worth the setup, the cost or the
+extra failure mode — and keeping them in Postgres means serving one is an ordinary
+authorization check rather than a separate access-control system.
+
+`GET /api/assets/[id]` resolves the owning document first and runs the same
+`loadDocumentForUser` check as everything else, so a stranger gets `404` and a signed-out
+caller gets `401`. The alternative — a public URL with an unguessable id — would mean
+that sharing a document silently published its pictures to anyone who ever saw the link,
+and that revoking access left the images readable forever.
+
+Two related decisions:
+
+- **Widths are percentages, not pixels.** A picture sized on a wide monitor would
+  otherwise overflow a narrower one. Four presets (25/50/75/100%) cover the need without
+  the pointer-event code that drag handles require.
+- **`.docx` imports drop embedded pictures.** mammoth's default inlines a base64 data URI
+  per image, which would push a modest file past the 1 MB document limit and store image
+  bytes inside the content JSON. Images added in the editor go to the asset table instead.
+
+### 7. PDF export is a stylesheet
+
+"Download PDF" calls `window.print()`. A print stylesheet hides the app chrome, turns the
+on-screen card into the page itself, and keeps headings with their text.
+
+Server-side rendering (Puppeteer plus a bundled Chromium) would produce a more controlled
+file, at the cost of a ~50 MB dependency, a slow cold start and a function that can time
+out. For a document that is already HTML, the browser's own print pipeline is the right
+tool, and it costs nothing to run.
+
 ---
 
 ## Infrastructure choices
@@ -144,6 +176,7 @@ rather than filtered. That's a stronger guarantee than a blocklist, and it's tes
 users              (id, email unique, name)
 documents          (id, owner_id, title, content jsonb, version, created_at, updated_at)
 document_shares    (document_id, user_id, role: viewer|editor)   PK(document_id, user_id)
+document_assets    (id, document_id, uploaded_by, mime_type, byte_size, data, created_at)
 ```
 
 Ownership lives on `documents.owner_id` and is **not** a share row, so an owner can never
@@ -173,5 +206,9 @@ double-sharing impossible at the database level rather than in application code.
 - Imports above 1 MB are rejected; Vercel caps request bodies around 4.5 MB regardless.
 - `.docx` import keeps headings, bold/italic and lists. Tables, images, footnotes and
   tracked changes are dropped — mammoth maps to semantic HTML, not a faithful render.
+- Images are resized by preset width, not by dragging. Deleting an image from a document
+  leaves its row in `document_assets`; a sweep for unreferenced assets is the follow-up.
+- PDF output is whatever the browser's print engine produces, so pagination is not
+  precisely controlled.
 - Renames are last-write-wins with no version guard. A single field that both people can
   see is not worth the friction of a conflict dialog.
