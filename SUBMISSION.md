@@ -30,17 +30,19 @@ Akintunji Sule · `akintunji.sule@gmail.com` · November 2026
 
 | File | What it is |
 |---|---|
-| `README.md` | Setup, run instructions, a 2-minute demo script, seeded accounts, scope |
-| `ARCHITECTURE.md` | Design reasoning, tradeoffs, infrastructure choices, what's next |
+| `akin-docs-source.zip` | Full source. No `node_modules`, no build output, no secrets. |
+| `README.md` | Local setup and run steps, a 2-minute demo script, seeded accounts, scope |
+| `ARCHITECTURE.md` | What I prioritized and why, the tradeoffs, and what I'd build next |
 | `AI_WORKFLOW.md` | Which AI tools, where they helped, what I rejected, how I verified |
 | `SUBMISSION.md` | This file |
-| `app/` `components/` `lib/` | Application source |
-| `lib/access.test.ts` `lib/convert.test.ts` | 44 automated tests |
-| `samples/` | Sample `.md`, `.txt` and `.docx` files for testing import |
-| `.github/workflows/ci.yml` | CI: typecheck, lint, tests on every push |
-| `.env.example` | The two environment variables needed |
+| `video-url.txt` | Walkthrough video link |
+| `live-url.txt` | Live URL and test accounts |
+| `screenshots/` | Document list and editor |
+| `ajaia-docs/` | The working repository, if you'd rather browse than unzip |
 
----
+Inside the source: `app/` (pages and route handlers), `components/`, `lib/` (policy,
+validation, conversion, pagination), `lib/*.test.ts` (44 tests), `samples/` (files for
+testing import), `.github/workflows/ci.yml`, `.env.example`.
 
 ## Working end to end
 
