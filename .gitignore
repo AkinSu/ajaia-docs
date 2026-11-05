@@ -43,3 +43,6 @@ next-env.d.ts
 # allow the example env file
 !.env.example
 .vercel
+
+# Local agent tooling, not part of the product
+.claude/
