@@ -44,11 +44,15 @@ Akintunji Sule · `akintunji.sule@gmail.com` · November 2026
 
 ## Working end to end
 
+**Document list** — a grid of preview cards showing a miniature of each document's real
+content, with the name and metadata underneath.
+
 **Documents** — create, rename inline, edit, reopen. Bold, italic, underline, H1–H3,
 bulleted and numbered lists, with toolbar active states.
 
-**Images** — insert PNG/JPEG/GIF/WebP up to 2 MB and set the width (Small / Medium /
-Large / Full). Images are stored per document and served through the same authorization
+**Images** — insert PNG/JPEG/GIF/WebP up to 2 MB. Selecting a picture shows a size
+control under it (Small / Medium / Large / Full, plus Remove), attached to the image
+rather than buried in the toolbar. Images are stored per document and served through the same authorization
 check as the document, so they are exactly as private as the document holding them.
 
 **Download as PDF** — a print stylesheet plus the browser's own "Save as PDF". No
