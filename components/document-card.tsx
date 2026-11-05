@@ -46,6 +46,31 @@ function Thumbnail({ blocks }: { blocks: PreviewBlock[] }) {
   );
 }
 
+
+/**
+ * Document glyph for the card footer.
+ *
+ * Drawn here rather than reusing the app logo: this slot labels a file, not
+ * the product. Three white rules on a rounded blue tile read as a page at
+ * 16px, where a detailed mark would turn to mush.
+ */
+function DocumentGlyph({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="16" height="16" rx="3.5" fill="#2563eb" />
+      <rect x="4" y="4.5" width="8" height="1.6" rx="0.8" fill="#fff" />
+      <rect x="4" y="7.2" width="8" height="1.6" rx="0.8" fill="#fff" opacity="0.9" />
+      <rect x="4" y="9.9" width="5" height="1.6" rx="0.8" fill="#fff" opacity="0.75" />
+    </svg>
+  );
+}
+
 type CardProps = {
   id: string;
   title: string;
@@ -96,8 +121,7 @@ export function DocumentCard({
 
       {/* Name and metadata sit underneath, the way Docs does it. */}
       <div className="flex items-start gap-2 px-3 py-2.5">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="" width={16} height={16} className="mt-0.5 size-4 shrink-0 rounded-[3px]" />
+        <DocumentGlyph className="mt-0.5 size-4 shrink-0" />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-medium text-slate-900 group-hover:text-blue-700">
             {title}
