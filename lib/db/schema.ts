@@ -60,6 +60,28 @@ export const documentShares = pgTable(
   (table) => [primaryKey({ columns: [table.documentId, table.userId] })],
 );
 
+/**
+ * Image bytes for pictures placed in a document.
+ *
+ * Stored in Postgres rather than a blob service: a few small images do not
+ * justify another provider, and keeping them in the same row-level security
+ * story means serving one is a normal authorization check.
+ */
+export const documentAssets = pgTable("document_assets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  documentId: uuid("document_id")
+    .notNull()
+    .references(() => documents.id, { onDelete: "cascade" }),
+  uploadedBy: uuid("uploaded_by")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  mimeType: text("mime_type").notNull(),
+  byteSize: integer("byte_size").notNull(),
+  data: text("data").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export type User = typeof users.$inferSelect;
 export type Document = typeof documents.$inferSelect;
 export type DocumentShare = typeof documentShares.$inferSelect;
+export type DocumentAsset = typeof documentAssets.$inferSelect;

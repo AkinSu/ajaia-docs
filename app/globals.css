@@ -87,3 +87,70 @@
   height: 0;
   pointer-events: none;
 }
+
+/* Images inside a document. Width is stored on the node as a percentage so a
+   picture scales with the page rather than being pinned to its pixel size. */
+.document-body img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+}
+
+/* The selected image is outlined so the size buttons in the toolbar have an
+   obvious target. */
+.document-body img.ProseMirror-selectednode {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Printing: the browser's own dialog offers "Save as PDF", so the whole PDF
+   export is this stylesheet plus a window.print() call. Everything that is
+   app chrome rather than document content is hidden. */
+@media print {
+  .no-print,
+  [role="alert"],
+  [role="dialog"] {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  /* The on-screen page is a card; in print it is the page itself. */
+  .document-sheet {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .document-body {
+    font-size: 11.5pt;
+    line-height: 1.6;
+  }
+
+  /* Keep headings with the text that follows, and never split an image. */
+  .document-body h1,
+  .document-body h2,
+  .document-body h3 {
+    break-after: avoid;
+  }
+
+  .document-body img,
+  .document-body li {
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 18mm;
+  }
+}

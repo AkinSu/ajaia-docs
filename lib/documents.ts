@@ -2,7 +2,7 @@ import type { JSONContent } from "@tiptap/core";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { resolveAccess, type AccessRole } from "./access";
 import { getDb } from "./db";
-import { documentShares, documents, users } from "./db/schema";
+import { documentAssets, documentShares, documents, users } from "./db/schema";
 import { EMPTY_DOC } from "./editor-extensions";
 
 export type DocumentWithAccess = {
@@ -195,4 +195,26 @@ export async function getUserById(id: string) {
   const db = getDb();
   const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
   return user ?? null;
+}
+
+export async function createAsset(input: {
+  documentId: string;
+  uploadedBy: string;
+  mimeType: string;
+  byteSize: number;
+  data: string;
+}) {
+  const db = getDb();
+  const [asset] = await db.insert(documentAssets).values(input).returning();
+  return asset;
+}
+
+export async function getAsset(assetId: string) {
+  const db = getDb();
+  const [asset] = await db
+    .select()
+    .from(documentAssets)
+    .where(eq(documentAssets.id, assetId))
+    .limit(1);
+  return asset ?? null;
 }

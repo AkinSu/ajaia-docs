@@ -1,8 +1,14 @@
 "use client";
 
 import { type Editor, useEditorState } from "@tiptap/react";
+import { IMAGE_WIDTHS } from "@/lib/image-constants";
 
-type ToolbarProps = { editor: Editor; disabled?: boolean };
+type ToolbarProps = {
+  editor: Editor;
+  disabled?: boolean;
+  onInsertImage?: () => void;
+  imageBusy?: boolean;
+};
 
 function Button({
   label,
@@ -43,7 +49,7 @@ function Button({
 
 const Divider = () => <span aria-hidden className="mx-1 h-5 w-px bg-slate-200" />;
 
-export function Toolbar({ editor, disabled = false }: ToolbarProps) {
+export function Toolbar({ editor, disabled = false, onInsertImage, imageBusy }: ToolbarProps) {
   const state = useEditorState({
     editor,
     selector: ({ editor: instance }) => ({
@@ -56,6 +62,8 @@ export function Toolbar({ editor, disabled = false }: ToolbarProps) {
       paragraph: instance.isActive("paragraph"),
       bulletList: instance.isActive("bulletList"),
       orderedList: instance.isActive("orderedList"),
+      image: instance.isActive("image"),
+      imageWidth: (instance.getAttributes("image").width as string | undefined) ?? null,
     }),
   });
 
@@ -147,6 +155,42 @@ export function Toolbar({ editor, disabled = false }: ToolbarProps) {
       >
         1. List
       </Button>
+
+      {onInsertImage ? (
+        <>
+          <Divider />
+          <Button
+            label="Insert image"
+            active={false}
+            disabled={disabled || imageBusy}
+            onClick={onInsertImage}
+          >
+            {imageBusy ? "Uploading…" : "Image"}
+          </Button>
+        </>
+      ) : null}
+
+      {/* Width controls appear only while an image is selected, so the
+          toolbar stays short the rest of the time. */}
+      {state.image ? (
+        <>
+          <Divider />
+          <span className="px-1 text-xs font-medium text-slate-500">Size</span>
+          {IMAGE_WIDTHS.map((option) => (
+            <Button
+              key={option.value}
+              label={`Image size: ${option.label}`}
+              active={state.imageWidth === option.value}
+              disabled={disabled}
+              onClick={() =>
+                editor.chain().focus().updateAttributes("image", { width: option.value }).run()
+              }
+            >
+              {option.label}
+            </Button>
+          ))}
+        </>
+      ) : null}
     </div>
   );
 }

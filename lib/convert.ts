@@ -214,6 +214,11 @@ export async function convertUpload(input: {
         // mammoth's Node path needs a real Buffer.
         buffer: Buffer.from(bytes),
       });
+      // Drop embedded pictures rather than inlining them. mammoth's default is
+      // a base64 data URI per image, which would push a modest .docx past the
+      // 1 MB document limit and store the bytes inside the content JSON.
+      // Images added in the editor go to the asset table instead.
+      result = { value: result.value.replace(/<img\b[^>]*>/gi, "") };
     } catch {
       throw new ConversionError(
         "Could not read this .docx file. It may be corrupt or password protected.",

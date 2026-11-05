@@ -10,6 +10,11 @@ import { Toolbar } from "@/components/editor/toolbar";
 import { canEdit, canManageSharing, type AccessRole } from "@/lib/access";
 import { editorExtensions } from "@/lib/editor-extensions";
 import { formatTime } from "@/lib/format";
+import {
+  MAX_IMAGE_BYTES,
+  SUPPORTED_IMAGE_LABEL,
+  SUPPORTED_IMAGE_TYPES,
+} from "@/lib/image-constants";
 
 /** How long to wait after the last keystroke before saving. */
 const AUTOSAVE_DELAY_MS = 800;
@@ -42,6 +47,8 @@ export function DocumentEditor({
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
+  const [imageBusy, setImageBusy] = useState(false);
+  const imageInput = useRef<HTMLInputElement>(null);
 
   const versionRef = useRef(initialVersion);
   const dirtyRef = useRef(false);
@@ -199,10 +206,54 @@ export function DocumentEditor({
     [documentId, initialTitle],
   );
 
+  const uploadImage = useCallback(
+    async (file: File) => {
+      if (!editor) return;
+      setErrorMessage(null);
+
+      if (!(SUPPORTED_IMAGE_TYPES as readonly string[]).includes(file.type)) {
+        setErrorMessage(`Unsupported image type. ${SUPPORTED_IMAGE_LABEL}.`);
+        setStatus("error");
+        return;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        setErrorMessage(`That image is larger than the ${MAX_IMAGE_BYTES / 1_000_000} MB limit.`);
+        setStatus("error");
+        return;
+      }
+
+      setImageBusy(true);
+      try {
+        const form = new FormData();
+        form.append("file", file);
+        const response = await fetch(`/api/documents/${documentId}/assets`, {
+          method: "POST",
+          body: form,
+        });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(body.error ?? "Could not upload that image.");
+
+        editor.chain().focus().setImage({ src: body.url }).run();
+        dirtyRef.current = true;
+        scheduleSave();
+      } catch (caught) {
+        setErrorMessage(caught instanceof Error ? caught.message : "Could not upload that image.");
+        setStatus("error");
+      } finally {
+        setImageBusy(false);
+        if (imageInput.current) imageInput.current.value = "";
+      }
+    },
+    [documentId, editor, scheduleSave],
+  );
+
+  /** Uses the browser's own print dialog, which offers "Save as PDF". */
+  const downloadPdf = useCallback(() => window.print(), []);
+
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-4 gap-y-2 px-6 py-3">
+      <header className="no-print sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-6 py-3">
           <Link
             href="/docs"
             className="text-sm font-medium text-slate-500 transition hover:text-slate-900"
@@ -237,6 +288,14 @@ export function DocumentEditor({
             ) : null}
             <button
               type="button"
+              onClick={downloadPdf}
+              title="Opens your browser's print dialog, where you can choose Save as PDF"
+              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+            >
+              Download PDF
+            </button>
+            <button
+              type="button"
               onClick={() => setShareOpen(true)}
               className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
             >
@@ -246,7 +305,7 @@ export function DocumentEditor({
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-6 py-6">
+      <main className="mx-auto max-w-5xl px-6 py-6">
         {status === "conflict" ? (
           <div
             role="alert"
@@ -282,12 +341,27 @@ export function DocumentEditor({
         ) : null}
 
         {editor && editable ? (
-          <div className="mb-4">
-            <Toolbar editor={editor} disabled={status === "conflict"} />
+          <div className="no-print mb-4">
+            <Toolbar
+              editor={editor}
+              disabled={status === "conflict"}
+              onInsertImage={() => imageInput.current?.click()}
+              imageBusy={imageBusy}
+            />
+            <input
+              ref={imageInput}
+              type="file"
+              accept={SUPPORTED_IMAGE_TYPES.join(",")}
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void uploadImage(file);
+              }}
+            />
           </div>
         ) : null}
 
-        <div className="rounded-xl border border-slate-200 bg-white px-8 py-10 shadow-sm">
+        <div className="document-sheet rounded-xl border border-slate-200 bg-white px-16 py-20 shadow-sm">
           {editor ? (
             <EditorContent editor={editor} />
           ) : (
