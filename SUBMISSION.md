@@ -9,7 +9,7 @@ Akintunji Sule · `akintunji.sule@gmail.com` · November 2026
 
 | | |
 |---|---|
-| **Live app** | `<LIVE_URL>` |
+| **Live app** | https://ajaia-docs-iota-ebon.vercel.app |
 | **Walkthrough video** | `<VIDEO_URL>` |
 | **Source** | https://github.com/AkinSu/ajaia-docs |
 

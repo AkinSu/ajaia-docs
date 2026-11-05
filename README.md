@@ -3,6 +3,8 @@
 A lightweight collaborative document editor inspired by Google Docs. Create and format
 rich-text documents, import existing files, and share them with other people.
 
+**Live app: https://ajaia-docs-iota-ebon.vercel.app** — no credentials needed, just pick an account.
+
 Built for the Ajaia Full Stack Product Engineer take-home. See
 [ARCHITECTURE.md](./ARCHITECTURE.md) for the design reasoning and the scope cuts,
 [AI_WORKFLOW.md](./AI_WORKFLOW.md) for how AI tools were used, and
