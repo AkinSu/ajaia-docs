@@ -145,7 +145,25 @@ Two related decisions:
   per image, which would push a modest file past the 1 MB document limit and store image
   bytes inside the content JSON. Images added in the editor go to the asset table instead.
 
-### 7. PDF export is a stylesheet
+### 7. Pagination without rewriting the document
+
+ProseMirror holds one flowing document, so there are no page nodes to split content into
+without rewriting the document on every keystroke. Instead a plugin measures each
+top-level block and injects a spacer widget wherever a block would cross a page boundary.
+The spacer fills the rest of the sheet, draws the gutter and supplies the next page's top
+margin, so the block lands on a fresh page and the caret follows it.
+
+The bug worth recording: the first version measured `offsetTop`, which already includes
+the spacers from the previous pass. The calculation was reading its own output, so breaks
+oscillated and pages drifted to ~950px instead of 912. Summing each block's own height
+instead makes the measurement independent of the decorations, and it converges in one
+pass.
+
+What it does not do is split a single block. A paragraph taller than the page body
+overhangs rather than breaking mid-sentence, because breaking inside a block means laying
+out individual text runs — that is a typesetting engine, not a plugin.
+
+### 8. PDF export is a stylesheet
 
 "Download PDF" calls `window.print()`. A print stylesheet hides the app chrome, turns the
 on-screen card into the page itself, and keeps headings with their text.
@@ -210,11 +228,9 @@ double-sharing impossible at the database level rather than in application code.
   leaves its row in `document_assets`; a sweep for unreferenced assets is the follow-up.
 - PDF output is whatever the browser's print engine produces, so pagination is not
   precisely controlled.
-- On screen, page boundaries are drawn as guides. Text flows continuously in a single
-  editor rather than reflowing into discrete page elements. Real pagination means
-  measuring laid-out content and re-splitting it on every keystroke — Google Docs runs its
-  own layout engine for this. The guides plus a genuinely paginated PDF cover the need at
-  a fraction of the cost.
+- Pagination never splits a single block: a paragraph or image taller than the page body
+  overhangs instead of breaking mid-sentence. Screen page breaks are therefore
+  content-driven and will not always line up exactly with the PDF's.
 - Demo capacity caps: 50 documents per account, 50 images per document.
 - Renames are last-write-wins with no version guard. A single field that both people can
   see is not worth the friction of a conflict dialog.

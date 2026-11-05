@@ -52,10 +52,10 @@ owns it: anyone without access to the document gets a 404 for the image too.
 **Download as PDF** — uses the browser's own print dialog ("Save as PDF"), so there is no
 dependency and nothing to run server-side. A print stylesheet hides the app chrome.
 
-**Page guides** — a rule is drawn every page height so you can see where pages will break.
-This is a visual guide, not true pagination: text flows in one continuous editor rather
-than reflowing into separate page elements the way Google Docs does. The exported PDF is
-really paginated, by the browser's print engine.
+**Pagination** — content is laid out on real pages. A block that would cross a page
+boundary is pushed onto the next page, with a gutter between sheets and matching top and
+bottom margins, and the caret follows it. One limitation: a single block is never split,
+so a paragraph taller than a page overhangs rather than breaking mid-sentence.
 
 **Demo limits** — 50 documents per account and 50 images per document. This runs on free
 infrastructure for a hiring exercise, so the caps stop one visitor filling the database

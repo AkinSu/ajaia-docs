@@ -10,6 +10,7 @@ import { ShareDialog } from "@/components/share-dialog";
 import { Toolbar } from "@/components/editor/toolbar";
 import { canEdit, canManageSharing, type AccessRole } from "@/lib/access";
 import { editorExtensions } from "@/lib/editor-extensions";
+import { Pagination } from "@/lib/pagination";
 import { formatTime } from "@/lib/format";
 import {
   IMAGE_WIDTHS,
@@ -65,6 +66,7 @@ export function DocumentEditor({
     extensions: [
       ...editorExtensions,
       Placeholder.configure({ placeholder: "Start writing…" }),
+      Pagination,
     ],
     content: initialContent,
     editable,
@@ -392,7 +394,7 @@ export function DocumentEditor({
           </div>
         ) : null}
 
-        <div className="document-sheet document-pages rounded-xl border border-slate-200 bg-white px-16 py-20 shadow-sm">
+        <div className="document-sheet rounded-xl border border-slate-200 bg-white px-16 pb-20 pt-20 shadow-sm">
           {editor ? (
             <>
               {/* The size control belongs to the picture, not the toolbar: it

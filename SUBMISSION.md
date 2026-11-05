@@ -55,6 +55,9 @@ control under it (Small / Medium / Large / Full, plus Remove), attached to the i
 rather than buried in the toolbar. Images are stored per document and served through the same authorization
 check as the document, so they are exactly as private as the document holding them.
 
+**Pagination** — content flows onto real pages with a gutter between sheets and matching
+top and bottom margins; blocks that would cross a boundary move to the next page.
+
 **Download as PDF** — a print stylesheet plus the browser's own "Save as PDF". No
 dependency, nothing server-side. The PDF is genuinely paginated.
 
@@ -95,7 +98,7 @@ ProseMirror schema, so a crafted request can't persist markup the editor wouldn'
 | HTTP-layer tests | **Partial.** Policy and converters are unit tested in CI; routes were verified with a scripted `curl` pass over every status code, not automated. | Would be the first thing I'd add to CI. |
 | Comments, version history | **Not built.** | Optional stretch items. Depth over breadth. |
 | Image drag-resize | **Preset widths only** (25/50/75/100%). | Drag handles are a lot of pointer-event code for the same result. |
-| Page pagination on screen | **Visual guides only.** A rule marks each page height; text does not reflow into separate page elements. | True pagination means measuring laid-out content and splitting it across page nodes, re-running on every keystroke. Google Docs does its own layout engine for this. The PDF export paginates for real, which is where page breaks actually matter. |
+| Mid-block page splitting | **Not built.** Pages break between blocks; a paragraph taller than a page overhangs. | Splitting inside a block means laying out individual text runs — a typesetting engine, not a plugin. |
 | Orphaned image cleanup | **Not built.** Deleting an image from a document leaves its row. | A sweep for unreferenced assets is the follow-up. |
 | `.docx` fidelity | **Partial.** Headings, bold/italic and lists import. Tables, images, footnotes and tracked changes are dropped. | mammoth maps to semantic HTML rather than rendering faithfully — the right tradeoff for an editable document. |
 | Mobile | **Usable, not tuned** below tablet width. | |

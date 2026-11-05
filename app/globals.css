@@ -155,33 +155,6 @@
   }
 }
 
-/* Page guides.
-   A light rule is drawn every US-Letter page height so long documents show
-   where the page breaks will fall. This is a visual guide, not true
-   pagination: text flows continuously in one editor. The PDF export is really
-   paginated, by the browser's print engine. */
-.document-pages {
-  /* 11in page - 2 x 0.75in of the sheet's own vertical padding, at 96dpi. */
-  --page-height: 912px;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(var(--page-height) - 2px),
-    #cbd5e1 calc(var(--page-height) - 2px),
-    #cbd5e1 var(--page-height)
-  );
-  background-position: 0 5rem; /* start after the sheet's top padding */
-  background-repeat: repeat-y;
-}
-
-@media print {
-  /* The real page breaks come from the print engine, so the guides would be
-     drawn in the wrong places on paper. */
-  .document-pages {
-    background-image: none;
-  }
-}
-
 /* The writing area is always at least one page tall, so a new or short
    document still looks like a sheet of paper rather than a small card. */
 .document-body {
@@ -191,5 +164,22 @@
 @media print {
   .document-body {
     min-height: 0;
+  }
+}
+
+/* Page spacers injected by the pagination plugin. They are widget
+   decorations, so ProseMirror already marks them uneditable; this just stops
+   them taking a text cursor or being selected by a drag. */
+.page-spacer {
+  margin: 0 -4rem; /* bleed over the sheet's horizontal padding */
+  user-select: none;
+  pointer-events: none;
+}
+
+@media print {
+  /* The print engine paginates for real, so the on-screen spacers would
+     insert blank bands in the middle of the PDF. */
+  .page-spacer {
+    display: none !important;
   }
 }
