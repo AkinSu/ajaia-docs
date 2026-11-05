@@ -72,7 +72,7 @@ export function DocumentEditor({
     editorProps: {
       attributes: {
         id: "document-body",
-        class: "document-body min-h-[60vh]",
+        class: "document-body",
         role: "textbox",
         "aria-multiline": "true",
         "aria-label": "Document body",

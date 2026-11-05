@@ -181,3 +181,15 @@
     background-image: none;
   }
 }
+
+/* The writing area is always at least one page tall, so a new or short
+   document still looks like a sheet of paper rather than a small card. */
+.document-body {
+  min-height: var(--page-height, 912px);
+}
+
+@media print {
+  .document-body {
+    min-height: 0;
+  }
+}
