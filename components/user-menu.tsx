@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Avatar } from "@/components/avatar";
 
 export function UserMenu({ name, email }: { name: string; email: string }) {
   const router = useRouter();
@@ -16,6 +17,7 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
 
   return (
     <div className="flex items-center gap-3">
+      <Avatar name={name} email={email} className="size-8" />
       <div className="text-right">
         <p className="text-sm font-medium text-slate-900">{name}</p>
         <p className="text-xs text-slate-500">{email}</p>

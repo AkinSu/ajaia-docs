@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Avatar } from "@/components/avatar";
 
 type Share = { userId: string; name: string; email: string; role: "viewer" | "editor" };
 
@@ -207,6 +208,7 @@ export function ShareDialog({
           </h3>
           <ul className="mt-2 divide-y divide-slate-100">
             <li className="flex items-center gap-3 py-2.5">
+              <Avatar name={owner.name} email={owner.email} className="size-8" />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-medium text-slate-900">
                   {owner.name}
@@ -226,6 +228,7 @@ export function ShareDialog({
             ) : (
               shares.map((share) => (
                 <li key={share.userId} className="flex items-center gap-3 py-2.5">
+                  <Avatar name={share.name} email={share.email} className="size-8" />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium text-slate-900">
                       {share.name}

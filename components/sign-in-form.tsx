@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { Avatar } from "@/components/avatar";
 
 type DemoUser = { id: string; name: string; email: string };
 
@@ -58,13 +59,7 @@ export function SignInForm({ users }: { users: DemoUser[] }) {
             disabled={signingIn !== null}
             className="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
-              {user.name
-                .split(" ")
-                .map((part) => part[0])
-                .join("")
-                .slice(0, 2)}
-            </span>
+            <Avatar name={user.name} email={user.email} className="size-10" />
             <span className="min-w-0">
               <span className="block truncate font-medium text-slate-900">{user.name}</span>
               <span className="block truncate text-sm text-slate-500">{user.email}</span>
