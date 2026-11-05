@@ -96,9 +96,8 @@ export function DocumentCard({
 
       {/* Name and metadata sit underneath, the way Docs does it. */}
       <div className="flex items-start gap-2 px-3 py-2.5">
-        <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-[3px] bg-blue-600 text-[8px] font-bold text-white">
-          D
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="" width={16} height={16} className="mt-0.5 size-4 shrink-0 rounded-[3px]" />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-medium text-slate-900 group-hover:text-blue-700">
             {title}

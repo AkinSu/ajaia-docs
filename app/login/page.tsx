@@ -27,7 +27,11 @@ export default async function LoginPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-8 px-6 py-12">
       <div>
-        <p className="text-sm font-medium tracking-wide text-blue-600">Ajaia Docs</p>
+        <div className="flex items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="" width={32} height={32} className="size-8 rounded-lg" />
+          <p className="text-sm font-medium tracking-wide text-blue-600">Ajaia Docs</p>
+        </div>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">
           Choose an account
         </h1>
