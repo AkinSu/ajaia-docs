@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ajaia Docs",
+  title: "Akin Docs",
   description:
     "A lightweight collaborative document editor: rich-text editing, file import and sharing.",
 };

@@ -31,7 +31,7 @@ export default async function DocumentsPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="" width={28} height={28} className="size-7 rounded-lg" />
             <span className="text-base font-semibold tracking-tight text-slate-900">
-              Ajaia Docs
+              Akin Docs
             </span>
           </Link>
           <UserMenu name={user.name} email={user.email} />

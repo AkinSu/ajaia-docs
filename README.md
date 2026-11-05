@@ -1,4 +1,4 @@
-# Ajaia Docs
+# Akin Docs
 
 A lightweight collaborative document editor inspired by Google Docs. Create and format
 rich-text documents, import existing files, and share them with other people.

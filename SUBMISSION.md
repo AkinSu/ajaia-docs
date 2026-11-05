@@ -1,6 +1,6 @@
 # Submission
 
-**Ajaia Docs** — a lightweight collaborative document editor
+**Akin Docs** — a lightweight collaborative document editor
 Akintunji Sule · `akintunji.sule@gmail.com` · November 2026
 
 ---
