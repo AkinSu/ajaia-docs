@@ -19,7 +19,7 @@ import {
 /** How long to wait after the last keystroke before saving. */
 const AUTOSAVE_DELAY_MS = 800;
 
-type SaveStatus = "idle" | "saving" | "saved" | "error" | "conflict";
+type SaveStatus = "idle" | "saving" | "saved" | "error" | "conflict" | "missing";
 
 type DocumentEditorProps = {
   documentId: string;
@@ -113,6 +113,15 @@ export function DocumentEditor({
       if (response.status === 409) {
         conflictRef.current = true;
         setStatus("conflict");
+        return;
+      }
+
+      if (response.status === 404) {
+        // The document was deleted (or the demo data was reset) while this tab
+        // was open. Stop writing and say so plainly rather than retrying
+        // against something that no longer exists.
+        conflictRef.current = true;
+        setStatus("missing");
         return;
       }
 
@@ -327,6 +336,26 @@ export function DocumentEditor({
           </div>
         ) : null}
 
+        {status === "missing" ? (
+          <div
+            role="alert"
+            className="mb-4 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-900"
+          >
+            <p className="font-semibold">This document no longer exists.</p>
+            <p className="mt-1">
+              It was deleted, or access was removed, while you had it open. Nothing further
+              will be saved. Your text is still on screen — copy anything you need before
+              leaving this page.
+            </p>
+            <Link
+              href="/docs"
+              className="mt-3 inline-flex rounded-lg bg-red-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-800"
+            >
+              Back to documents
+            </Link>
+          </div>
+        ) : null}
+
         {!editable ? (
           <p className="mb-4 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-600">
             You have view-only access to this document. {owner.name} owns it and can give you
@@ -344,7 +373,7 @@ export function DocumentEditor({
           <div className="no-print mb-4">
             <Toolbar
               editor={editor}
-              disabled={status === "conflict"}
+              disabled={status === "conflict" || status === "missing"}
               onInsertImage={() => imageInput.current?.click()}
               imageBusy={imageBusy}
             />
@@ -361,7 +390,7 @@ export function DocumentEditor({
           </div>
         ) : null}
 
-        <div className="document-sheet rounded-xl border border-slate-200 bg-white px-16 py-20 shadow-sm">
+        <div className="document-sheet document-pages rounded-xl border border-slate-200 bg-white px-16 py-20 shadow-sm">
           {editor ? (
             <EditorContent editor={editor} />
           ) : (
@@ -402,6 +431,8 @@ function SaveIndicator({
         ? "Not saved"
         : status === "conflict"
           ? "Paused"
+          : status === "missing"
+            ? "Not saved"
           : status === "saved" && savedAt
             ? `Saved ${formatTime(savedAt)}`
             : "All changes saved";

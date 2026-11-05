@@ -154,3 +154,30 @@
     margin: 18mm;
   }
 }
+
+/* Page guides.
+   A light rule is drawn every US-Letter page height so long documents show
+   where the page breaks will fall. This is a visual guide, not true
+   pagination: text flows continuously in one editor. The PDF export is really
+   paginated, by the browser's print engine. */
+.document-pages {
+  /* 11in page - 2 x 0.75in of the sheet's own vertical padding, at 96dpi. */
+  --page-height: 912px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--page-height) - 1px),
+    #e2e8f0 calc(var(--page-height) - 1px),
+    #e2e8f0 var(--page-height)
+  );
+  background-position: 0 5rem; /* start after the sheet's top padding */
+  background-repeat: repeat-y;
+}
+
+@media print {
+  /* The real page breaks come from the print engine, so the guides would be
+     drawn in the wrong places on paper. */
+  .document-pages {
+    background-image: none;
+  }
+}

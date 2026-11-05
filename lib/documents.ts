@@ -218,3 +218,22 @@ export async function getAsset(assetId: string) {
     .limit(1);
   return asset ?? null;
 }
+
+/** Documents a user owns. Shared documents do not count against their cap. */
+export async function countDocumentsOwnedBy(userId: string): Promise<number> {
+  const db = getDb();
+  const [row] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(documents)
+    .where(eq(documents.ownerId, userId));
+  return row?.count ?? 0;
+}
+
+export async function countAssetsForDocument(documentId: string): Promise<number> {
+  const db = getDb();
+  const [row] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(documentAssets)
+    .where(eq(documentAssets.documentId, documentId));
+  return row?.count ?? 0;
+}

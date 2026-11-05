@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { badRequest, unauthenticated } from "@/lib/api";
-import { createDocument, listDocumentsForUser } from "@/lib/documents";
+import { countDocumentsOwnedBy, createDocument, listDocumentsForUser } from "@/lib/documents";
+import { MAX_DOCUMENTS_PER_USER } from "@/lib/limits";
 import { getCurrentUserId } from "@/lib/session";
 import { titleSchema } from "@/lib/validation";
 
@@ -30,6 +31,13 @@ export async function POST(request: Request) {
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) {
     return badRequest(parsed.error.issues[0]?.message ?? "Invalid document.");
+  }
+
+  const owned = await countDocumentsOwnedBy(userId);
+  if (owned >= MAX_DOCUMENTS_PER_USER) {
+    return badRequest(
+      `This demo allows ${MAX_DOCUMENTS_PER_USER} documents per account. Delete one to make room.`,
+    );
   }
 
   const created = await createDocument({ ownerId: userId, title: parsed.data.title });

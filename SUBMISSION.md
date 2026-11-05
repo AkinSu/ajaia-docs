@@ -52,7 +52,9 @@ Large / Full). Images are stored per document and served through the same author
 check as the document, so they are exactly as private as the document holding them.
 
 **Download as PDF** — a print stylesheet plus the browser's own "Save as PDF". No
-dependency, nothing server-side.
+dependency, nothing server-side. The PDF is genuinely paginated.
+
+**Demo limits** — 50 documents per account, 50 images per document, enforced server-side.
 
 **Autosave** — debounced 800 ms, flushed on tab hide and page unload, with a live
 `Saving… / Saved 4:52 PM / Not saved` indicator.
@@ -89,6 +91,7 @@ ProseMirror schema, so a crafted request can't persist markup the editor wouldn'
 | HTTP-layer tests | **Partial.** Policy and converters are unit tested in CI; routes were verified with a scripted `curl` pass over every status code, not automated. | Would be the first thing I'd add to CI. |
 | Comments, version history | **Not built.** | Optional stretch items. Depth over breadth. |
 | Image drag-resize | **Preset widths only** (25/50/75/100%). | Drag handles are a lot of pointer-event code for the same result. |
+| Page pagination on screen | **Visual guides only.** A rule marks each page height; text does not reflow into separate page elements. | True pagination means measuring laid-out content and splitting it across page nodes, re-running on every keystroke. Google Docs does its own layout engine for this. The PDF export paginates for real, which is where page breaks actually matter. |
 | Orphaned image cleanup | **Not built.** Deleting an image from a document leaves its row. | A sweep for unreferenced assets is the follow-up. |
 | `.docx` fidelity | **Partial.** Headings, bold/italic and lists import. Tables, images, footnotes and tracked changes are dropped. | mammoth maps to semantic HTML rather than rendering faithfully — the right tradeoff for an editable document. |
 | Mobile | **Usable, not tuned** below tablet width. | |

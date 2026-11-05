@@ -52,6 +52,15 @@ owns it: anyone without access to the document gets a 404 for the image too.
 **Download as PDF** — uses the browser's own print dialog ("Save as PDF"), so there is no
 dependency and nothing to run server-side. A print stylesheet hides the app chrome.
 
+**Page guides** — a rule is drawn every page height so you can see where pages will break.
+This is a visual guide, not true pagination: text flows in one continuous editor rather
+than reflowing into separate page elements the way Google Docs does. The exported PDF is
+really paginated, by the browser's print engine.
+
+**Demo limits** — 50 documents per account and 50 images per document. This runs on free
+infrastructure for a hiring exercise, so the caps stop one visitor filling the database
+for everyone else. Nobody evaluating the app will reach them.
+
 **Autosave** — saves 800 ms after you stop typing, and flushes immediately if you hide
 the tab or close the page. The header always shows the current save state.
 

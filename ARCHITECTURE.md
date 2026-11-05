@@ -210,5 +210,11 @@ double-sharing impossible at the database level rather than in application code.
   leaves its row in `document_assets`; a sweep for unreferenced assets is the follow-up.
 - PDF output is whatever the browser's print engine produces, so pagination is not
   precisely controlled.
+- On screen, page boundaries are drawn as guides. Text flows continuously in a single
+  editor rather than reflowing into discrete page elements. Real pagination means
+  measuring laid-out content and re-splitting it on every keystroke — Google Docs runs its
+  own layout engine for this. The guides plus a genuinely paginated PDF cover the need at
+  a fraction of the cost.
+- Demo capacity caps: 50 documents per account, 50 images per document.
 - Renames are last-write-wins with no version guard. A single field that both people can
   see is not worth the friction of a conflict dialog.

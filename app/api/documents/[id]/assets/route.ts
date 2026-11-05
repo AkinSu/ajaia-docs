@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { canEdit } from "@/lib/access";
 import { badRequest, forbidden, notFound, unauthenticated } from "@/lib/api";
-import { createAsset, loadDocumentForUser } from "@/lib/documents";
+import { countAssetsForDocument, createAsset, loadDocumentForUser } from "@/lib/documents";
+import { MAX_IMAGES_PER_DOCUMENT } from "@/lib/limits";
 import {
   MAX_IMAGE_BYTES,
   SUPPORTED_IMAGE_LABEL,
@@ -24,6 +25,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!found) return notFound();
   if (!canEdit(found.role)) {
     return forbidden("You have view-only access to this document.");
+  }
+
+  const existing = await countAssetsForDocument(id);
+  if (existing >= MAX_IMAGES_PER_DOCUMENT) {
+    return badRequest(`This demo allows ${MAX_IMAGES_PER_DOCUMENT} images per document.`);
   }
 
   let form: FormData;

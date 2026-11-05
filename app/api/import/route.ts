@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { badRequest, unauthenticated } from "@/lib/api";
 import { ConversionError, MAX_UPLOAD_BYTES, convertUpload } from "@/lib/convert";
-import { createDocument } from "@/lib/documents";
+import { countDocumentsOwnedBy, createDocument } from "@/lib/documents";
+import { MAX_DOCUMENTS_PER_USER } from "@/lib/limits";
 import { getCurrentUserId } from "@/lib/session";
 
 // mammoth and the ProseMirror schema builder both need Node APIs.
@@ -23,6 +24,13 @@ export async function POST(request: Request) {
     form = await request.formData();
   } catch {
     return badRequest("Upload a file using multipart/form-data.");
+  }
+
+  const owned = await countDocumentsOwnedBy(userId);
+  if (owned >= MAX_DOCUMENTS_PER_USER) {
+    return badRequest(
+      `This demo allows ${MAX_DOCUMENTS_PER_USER} documents per account. Delete one to make room.`,
+    );
   }
 
   const file = form.get("file");
